@@ -1,0 +1,11 @@
+[package]
+name = "mod-matchrun"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+description = "Inside a match's own server: the CPU rule, and what watching a run needs"
+
+[dependencies]
+backend = { path = "../../crates/backend" }
+engine = { path = "../../crates/engine" }
+util = { path = "../../crates/util" }
