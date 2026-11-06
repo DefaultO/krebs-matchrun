@@ -1,10 +1,10 @@
 # krebs-matchrun
 
-A mod for [Krebs](https://gitea.defaul.to/DefaultO/krebs). It lives at `mods/matchrun` in the core, as a git submodule, and it
-builds only inside the core. To get it:
+A mod for Krebs, which is on [GitHub](https://github.com/DefaultO/krebs) and [Gitea](https://gitea.defaul.to/DefaultO/krebs).
+Either one is enough. It lives at `mods/matchrun` in the core, as a git submodule, and it builds only inside the core. To get it:
 
 ```
-git clone --recursive https://gitea.defaul.to/DefaultO/krebs.git
+git clone --recursive https://github.com/DefaultO/krebs.git
 ```
 
 It runs only inside a match's own server, which `mods/bare` starts with `--mods devtools,matchrun`. Never turn it on for the
