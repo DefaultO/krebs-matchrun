@@ -19,6 +19,7 @@ use engine::constants::{GCL_MULTIPLY, GCL_POW};
 use engine::doc::Val;
 use engine::processor::global::GlobalCtx;
 use engine::world::{UserIdx, UserState, World};
+use std::collections::BTreeSet;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
 use util::json::Json;
@@ -141,12 +142,18 @@ fn view(_req: &Request, ctx: &ApiCtx) -> Response {
     ]))
 }
 
+/// Each name once, as a repeat would add the whole room to the reply again.
+fn distinct(list: &str) -> Vec<&str> {
+    let mut seen = BTreeSet::new();
+    list.split(',').filter(|name| seen.insert(*name)).collect()
+}
+
 /// GET /api/matchrun/rooms?rooms=W1N1,W2N1: `{tick, rooms: {W1N1: [objects]}}`. Built as text, as each object already is.
 fn rooms(req: &Request, ctx: &ApiCtx) -> Response {
     let w = ctx.published.get();
     let mut out = format!("{{\"tick\":{},\"rooms\":{{", w.time);
     let mut first = true;
-    for name in req.param("rooms").unwrap_or("").split(',') {
+    for name in distinct(req.param("rooms").unwrap_or("")) {
         let Some(i) = w.meta.rooms.iter().position(|m| &*m.name == name) else { continue };
         if !std::mem::take(&mut first) {
             out.push(',');
@@ -167,6 +174,12 @@ fn rooms(req: &Request, ctx: &ApiCtx) -> Response {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_room_goes_in_a_reply_once() {
+        assert_eq!(distinct("W1N1,W2N1,W1N1,W1N1"), ["W1N1", "W2N1"]);
+        assert_eq!(distinct(&vec!["W1N1"; 1600].join(",")), ["W1N1"]);
+    }
 
     #[test]
     fn gcl_levels_follow_the_game() {
